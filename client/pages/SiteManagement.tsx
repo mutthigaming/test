@@ -250,39 +250,37 @@ export default function SiteManagement() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="border-0 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Sites</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
+            <Building2 className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{sites.length}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 bg-gradient-to-r from-green-50 to-green-100 text-green-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Site Incharge</CardTitle>
-            <UserIcon className="h-4 w-4 text-muted-foreground" />
+            <UserIcon className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{siteIncharges.length}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 bg-gradient-to-r from-yellow-50 to-yellow-100 text-yellow-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Assigned Foremen
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Assigned Foremen</CardTitle>
+            <Users className="h-4 w-4 text-yellow-700" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{assignedForemenCount}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 bg-gradient-to-r from-sky-50 to-sky-100 text-sky-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Workers</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-sky-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalWorkers}</div>
