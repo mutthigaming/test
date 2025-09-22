@@ -270,7 +270,9 @@ export default function SiteManagement() {
         </Card>
         <Card className="border-0 bg-gradient-to-r from-yellow-50 to-yellow-100 text-yellow-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Assigned Foremen</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Assigned Foremen
+            </CardTitle>
             <Users className="h-4 w-4 text-yellow-700" />
           </CardHeader>
           <CardContent>
