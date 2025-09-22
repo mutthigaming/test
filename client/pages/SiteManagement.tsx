@@ -20,6 +20,7 @@ import {
   DialogTrigger,
 } from "../components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
+import ConfirmDialog from "../components/ConfirmDialog";
 import { Badge } from "../components/ui/badge";
 import { ApiResponse, Site, User } from "@shared/api";
 import { Building2, Users, User as UserIcon, Plus, Pencil, Trash2, RefreshCcw, Search, ChevronDown, ChevronRight } from "lucide-react";
@@ -124,12 +125,10 @@ export default function SiteManagement() {
   };
 
   const deleteSite = async (site: Site) => {
-    if (!confirm("Delete this site?")) return;
     const token = localStorage.getItem("auth_token");
     const res = await fetch(`/api/sites/${site.id}`, { method: "DELETE", headers: token ? { Authorization: `Bearer ${token}` } : {} });
     if (res.ok) {
       setSites((prev) => prev.filter((s) => s.id !== site.id));
-      // Also refresh users (foremen/incharge assignments cleared)
       fetchAll();
     }
   };
@@ -261,7 +260,18 @@ export default function SiteManagement() {
                       <div className="col-span-2 text-left">{siteForemen.length}</div>
                       <div className="col-span-1 text-right space-x-2">
                         <Button size="sm" variant="ghost" onClick={(e)=>{ e.stopPropagation(); openEdit(s); }}><Pencil className="h-4 w-4"/></Button>
-                        <Button size="sm" variant="ghost" onClick={(e)=>{ e.stopPropagation(); deleteSite(s); }}><Trash2 className="h-4 w-4"/></Button>
+                        <ConfirmDialog
+                          title="Delete this site?"
+                          description="This action cannot be undone."
+                          confirmText="Delete"
+                          cancelText="Cancel"
+                          onConfirm={() => deleteSite(s)}
+                          trigger={
+                            <Button size="sm" variant="ghost" onClick={(e)=>{ e.stopPropagation(); }}>
+                              <Trash2 className="h-4 w-4"/>
+                            </Button>
+                          }
+                        />
                       </div>
                     </div>
 
@@ -290,7 +300,13 @@ export default function SiteManagement() {
                               {siteForemen.map((f)=> (
                                 <Badge key={f.id} variant="secondary" className="gap-2">
                                   {f.name}
-                                  <button className="ml-1" onClick={(e)=>{ e.stopPropagation(); removeForeman(f.id); }}>×</button>
+                                  <ConfirmDialog
+                                    title="Remove this foreman from site?"
+                                    confirmText="Remove"
+                                    cancelText="Cancel"
+                                    onConfirm={() => removeForeman(f.id)}
+                                    trigger={<button className="ml-1" onClick={(e)=>{ e.stopPropagation(); }}>×</button>}
+                                  />
                                 </Badge>
                               ))}
                             </div>
