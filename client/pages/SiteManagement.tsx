@@ -357,7 +357,7 @@ export default function SiteManagement() {
                       <div className="col-span-2 text-left">
                         {siteForemen.length}
                       </div>
-                      <div className="col-span-1 text-right space-x-2">
+                      <div className="col-span-1 text-right flex items-center justify-end gap-2">
                         <Button
                           size="sm"
                           variant="ghost"
