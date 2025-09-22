@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "../App";
 import {
   Card,
@@ -70,7 +70,11 @@ export default function AdminApproval() {
     undefined,
   );
 
+  const didFetchRef = useRef(false);
+
   useEffect(() => {
+    if (didFetchRef.current) return;
+    didFetchRef.current = true;
     fetchAttendanceRecords();
   }, []);
 
@@ -247,12 +251,18 @@ export default function AdminApproval() {
       )}
 
       <div className="flex justify-end">
-        <Dialog>
+        <Dialog
+          open={selectedRecord?.id === record.id}
+          onOpenChange={(open) => {
+            if (open) {
+              openRecordForApproval(record);
+            } else {
+              setSelectedRecord(null);
+            }
+          }}
+        >
           <DialogTrigger asChild>
-            <Button
-              variant={showActions ? "default" : "outline"}
-              onClick={() => openRecordForApproval(record)}
-            >
+            <Button variant={showActions ? "default" : "outline"}>
               <Eye className="mr-2 h-4 w-4" />
               {showActions ? "Review & Approve" : "View Details"}
             </Button>

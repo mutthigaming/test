@@ -19,10 +19,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../components/ui/dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
+import ConfirmDialog from "../components/ConfirmDialog";
 import { Badge } from "../components/ui/badge";
 import { ApiResponse, Site, User } from "@shared/api";
-import { Building2, Users, User as UserIcon, Plus, Pencil, Trash2, RefreshCcw, Search, ChevronDown, ChevronRight } from "lucide-react";
+import {
+  Building2,
+  Users,
+  User as UserIcon,
+  Plus,
+  Pencil,
+  Trash2,
+  RefreshCcw,
+  Search,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
 
 export default function SiteManagement() {
   const { user } = useAuth();
@@ -36,8 +53,13 @@ export default function SiteManagement() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const [createOpen, setCreateOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState<{ open: boolean; site?: Site }>({ open: false });
-  const [addForemanOpen, setAddForemanOpen] = useState<{ open: boolean; siteId?: string }>({ open: false });
+  const [editOpen, setEditOpen] = useState<{ open: boolean; site?: Site }>({
+    open: false,
+  });
+  const [addForemanOpen, setAddForemanOpen] = useState<{
+    open: boolean;
+    siteId?: string;
+  }>({ open: false });
   const [selectedForemanId, setSelectedForemanId] = useState<string>("");
 
   const [siteForm, setSiteForm] = useState({
@@ -46,24 +68,43 @@ export default function SiteManagement() {
     inchargeId: "",
   });
 
-  const siteIncharges = useMemo(() => users.filter((u) => u.role === "site_incharge"), [users]);
-  const foremen = useMemo(() => users.filter((u) => u.role === "foreman"), [users]);
-  const unassignedForemen = useMemo(() => foremen.filter((f) => !f.siteId), [foremen]);
+  const siteIncharges = useMemo(
+    () => users.filter((u) => u.role === "site_incharge"),
+    [users],
+  );
+  const foremen = useMemo(
+    () => users.filter((u) => u.role === "foreman"),
+    [users],
+  );
+  const unassignedForemen = useMemo(
+    () => foremen.filter((f) => !f.siteId),
+    [foremen],
+  );
 
-  const assignedForemenCount = useMemo(() => foremen.filter((f) => !!f.siteId).length, [foremen]);
+  const assignedForemenCount = useMemo(
+    () => foremen.filter((f) => !!f.siteId).length,
+    [foremen],
+  );
 
   const fetchAll = async () => {
     if (!isAdmin) return;
     const token = localStorage.getItem("auth_token");
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const [u, s, d] = await Promise.all([
-      fetch("/api/admin/users", { headers }).then((r) => r.json() as Promise<ApiResponse<User[]>>),
-      fetch("/api/sites", { headers }).then((r) => r.json() as Promise<ApiResponse<Site[]>>),
-      fetch("/api/dashboard/stats", { headers }).then((r) => r.json() as Promise<ApiResponse<{ totalWorkers: number }>>).catch(() => ({ success: true, data: { totalWorkers: 0 } } as any)),
+      fetch("/api/admin/users", { headers }).then(
+        (r) => r.json() as Promise<ApiResponse<User[]>>,
+      ),
+      fetch("/api/sites", { headers }).then(
+        (r) => r.json() as Promise<ApiResponse<Site[]>>,
+      ),
+      fetch("/api/dashboard/stats", { headers })
+        .then((r) => r.json() as Promise<ApiResponse<{ totalWorkers: number }>>)
+        .catch(() => ({ success: true, data: { totalWorkers: 0 } }) as any),
     ]);
     if (u.success && u.data) setUsers(u.data);
     if (s.success && s.data) setSites(s.data);
-    if (d && d.success && d.data) setTotalWorkers((d.data as any).totalWorkers ?? 0);
+    if (d && d.success && d.data)
+      setTotalWorkers((d.data as any).totalWorkers ?? 0);
   };
 
   useEffect(() => {
@@ -80,7 +121,9 @@ export default function SiteManagement() {
     );
   }
 
-  const filteredSites = sites.filter((s) => s.name.toLowerCase().includes(query.toLowerCase()));
+  const filteredSites = sites.filter((s) =>
+    s.name.toLowerCase().includes(query.toLowerCase()),
+  );
 
   const beginCreate = () => {
     setSiteForm({ name: "", location: "", inchargeId: "" });
@@ -92,7 +135,10 @@ export default function SiteManagement() {
     const token = localStorage.getItem("auth_token");
     const res = await fetch("/api/sites", {
       method: "POST",
-      headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       body: JSON.stringify({ ...siteForm }),
     });
     const data: ApiResponse<Site> = await res.json();
@@ -103,7 +149,11 @@ export default function SiteManagement() {
   };
 
   const openEdit = (site: Site) => {
-    setSiteForm({ name: site.name, location: site.location, inchargeId: site.inchargeId });
+    setSiteForm({
+      name: site.name,
+      location: site.location,
+      inchargeId: site.inchargeId,
+    });
     setEditOpen({ open: true, site });
   };
 
@@ -113,23 +163,29 @@ export default function SiteManagement() {
     const token = localStorage.getItem("auth_token");
     const res = await fetch(`/api/sites/${editOpen.site.id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       body: JSON.stringify({ ...siteForm }),
     });
     const data: ApiResponse<Site> = await res.json();
     if (res.ok && data.success && data.data) {
-      setSites((prev) => prev.map((s) => (s.id === data.data!.id ? data.data! : s)));
+      setSites((prev) =>
+        prev.map((s) => (s.id === data.data!.id ? data.data! : s)),
+      );
       setEditOpen({ open: false });
     }
   };
 
   const deleteSite = async (site: Site) => {
-    if (!confirm("Delete this site?")) return;
     const token = localStorage.getItem("auth_token");
-    const res = await fetch(`/api/sites/${site.id}`, { method: "DELETE", headers: token ? { Authorization: `Bearer ${token}` } : {} });
+    const res = await fetch(`/api/sites/${site.id}`, {
+      method: "DELETE",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
     if (res.ok) {
       setSites((prev) => prev.filter((s) => s.id !== site.id));
-      // Also refresh users (foremen/incharge assignments cleared)
       fetchAll();
     }
   };
@@ -139,11 +195,20 @@ export default function SiteManagement() {
     const token = localStorage.getItem("auth_token");
     const res = await fetch(`/api/admin/users/${selectedForemanId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       body: JSON.stringify({ siteId: addForemanOpen.siteId }),
     });
     if (res.ok) {
-      setUsers((prev) => prev.map((u) => (u.id === selectedForemanId ? { ...u, siteId: addForemanOpen.siteId! } : u)));
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === selectedForemanId
+            ? { ...u, siteId: addForemanOpen.siteId! }
+            : u,
+        ),
+      );
       setSelectedForemanId("");
       setAddForemanOpen({ open: false });
     }
@@ -153,11 +218,16 @@ export default function SiteManagement() {
     const token = localStorage.getItem("auth_token");
     const res = await fetch(`/api/admin/users/${foremanId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       body: JSON.stringify({ siteId: "" }),
     });
     if (res.ok) {
-      setUsers((prev) => prev.map((u) => (u.id === foremanId ? { ...u, siteId: "" } : u)));
+      setUsers((prev) =>
+        prev.map((u) => (u.id === foremanId ? { ...u, siteId: "" } : u)),
+      );
     }
   };
 
@@ -165,11 +235,17 @@ export default function SiteManagement() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Construction Sites</h1>
-          <p className="text-gray-600">Manage your construction site locations and assigned foremen</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Construction Sites
+          </h1>
+          <p className="text-gray-600">
+            Manage your construction site locations and assigned foremen
+          </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={beginCreate}><Plus className="h-4 w-4 mr-2"/> Add Site</Button>
+          <Button onClick={beginCreate}>
+            <Plus className="h-4 w-4 mr-2" /> Add Site
+          </Button>
         </div>
       </div>
 
@@ -177,7 +253,7 @@ export default function SiteManagement() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Sites</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground"/>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{sites.length}</div>
@@ -186,7 +262,7 @@ export default function SiteManagement() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Site Incharge</CardTitle>
-            <UserIcon className="h-4 w-4 text-muted-foreground"/>
+            <UserIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{siteIncharges.length}</div>
@@ -194,8 +270,10 @@ export default function SiteManagement() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Assigned Foremen</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground"/>
+            <CardTitle className="text-sm font-medium">
+              Assigned Foremen
+            </CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{assignedForemenCount}</div>
@@ -204,7 +282,7 @@ export default function SiteManagement() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Workers</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground"/>
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalWorkers}</div>
@@ -214,16 +292,25 @@ export default function SiteManagement() {
 
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400"/>
-          <Input placeholder="Search sites..." value={query} onChange={(e)=>setQuery(e.target.value)} className="pl-8"/>
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
+          <Input
+            placeholder="Search sites..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="pl-8"
+          />
         </div>
-        <Button variant="outline" onClick={fetchAll}><RefreshCcw className="h-4 w-4 mr-2"/> Refresh</Button>
+        <Button variant="outline" onClick={fetchAll}>
+          <RefreshCcw className="h-4 w-4 mr-2" /> Refresh
+        </Button>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>Sites</CardTitle>
-          <CardDescription>Click a site to view details and assignments</CardDescription>
+          <CardDescription>
+            Click a site to view details and assignments
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {filteredSites.length === 0 ? (
@@ -238,8 +325,10 @@ export default function SiteManagement() {
                 <div className="col-span-1 text-right">Actions</div>
               </div>
               {filteredSites.map((s) => {
-                const incharge = siteIncharges.find((u)=>u.id===s.inchargeId);
-                const siteForemen = foremen.filter((f)=>f.siteId===s.id);
+                const incharge = siteIncharges.find(
+                  (u) => u.id === s.inchargeId,
+                );
+                const siteForemen = foremen.filter((f) => f.siteId === s.id);
                 const expanded = expandedId === s.id;
                 return (
                   <div key={s.id} className="">
@@ -248,20 +337,57 @@ export default function SiteManagement() {
                       tabIndex={0}
                       className="grid grid-cols-12 gap-2 w-full p-3 hover:bg-muted/50"
                       onClick={() => setExpandedId(expanded ? null : s.id)}
-                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedId(expanded ? null : s.id); } }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setExpandedId(expanded ? null : s.id);
+                        }
+                      }}
                     >
                       <div className="col-span-3 text-left flex items-center gap-2">
-                        <UserIcon className="h-4 w-4"/> {incharge?.name || "-"}
+                        <UserIcon className="h-4 w-4" /> {incharge?.name || "-"}
                       </div>
                       <div className="col-span-3 text-left font-medium flex items-center gap-2">
-                        {expanded ? <ChevronDown className="h-4 w-4"/> : <ChevronRight className="h-4 w-4"/>}
+                        {expanded ? (
+                          <ChevronDown className="h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" />
+                        )}
                         {s.name}
                       </div>
                       <div className="col-span-3 text-left">{s.location}</div>
-                      <div className="col-span-2 text-left">{siteForemen.length}</div>
+                      <div className="col-span-2 text-left">
+                        {siteForemen.length}
+                      </div>
                       <div className="col-span-1 text-right space-x-2">
-                        <Button size="sm" variant="ghost" onClick={(e)=>{ e.stopPropagation(); openEdit(s); }}><Pencil className="h-4 w-4"/></Button>
-                        <Button size="sm" variant="ghost" onClick={(e)=>{ e.stopPropagation(); deleteSite(s); }}><Trash2 className="h-4 w-4"/></Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openEdit(s);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <ConfirmDialog
+                          title="Delete this site?"
+                          description="This action cannot be undone."
+                          confirmText="Delete"
+                          cancelText="Cancel"
+                          onConfirm={() => deleteSite(s)}
+                          trigger={
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          }
+                        />
                       </div>
                     </div>
 
@@ -269,28 +395,68 @@ export default function SiteManagement() {
                       <div className="bg-muted/30 p-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="border rounded-md p-3">
-                            <div className="text-sm text-gray-600 mb-2">Site Incharge</div>
+                            <div className="text-sm text-gray-600 mb-2">
+                              Site Incharge
+                            </div>
                             <div className="flex items-center gap-2">
-                              <UserIcon className="h-4 w-4"/>
+                              <UserIcon className="h-4 w-4" />
                               <div>
-                                <div className="font-medium">{incharge?.name || "Not assigned"}</div>
-                                <div className="text-xs text-gray-500">{incharge?.id || ""}</div>
+                                <div className="font-medium">
+                                  {incharge?.name || "Not assigned"}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  {incharge?.id || ""}
+                                </div>
                               </div>
                             </div>
                           </div>
                           <div className="border rounded-md p-3">
                             <div className="flex items-center justify-between mb-2">
-                              <div className="text-sm text-gray-600">Site Foremen</div>
-                              <Button size="sm" onClick={()=>{ setAddForemanOpen({ open: true, siteId: s.id }); }}><Plus className="h-4 w-4 mr-1"/> Add Foremen</Button>
+                              <div className="text-sm text-gray-600">
+                                Site Foremen
+                              </div>
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  setAddForemanOpen({
+                                    open: true,
+                                    siteId: s.id,
+                                  });
+                                }}
+                              >
+                                <Plus className="h-4 w-4 mr-1" /> Add Foremen
+                              </Button>
                             </div>
                             <div className="flex flex-wrap gap-2">
                               {siteForemen.length === 0 && (
-                                <div className="text-sm text-gray-500">Click on a foreman to view their attendance records</div>
+                                <div className="text-sm text-gray-500">
+                                  Click on a foreman to view their attendance
+                                  records
+                                </div>
                               )}
-                              {siteForemen.map((f)=> (
-                                <Badge key={f.id} variant="secondary" className="gap-2">
+                              {siteForemen.map((f) => (
+                                <Badge
+                                  key={f.id}
+                                  variant="secondary"
+                                  className="gap-2"
+                                >
                                   {f.name}
-                                  <button className="ml-1" onClick={(e)=>{ e.stopPropagation(); removeForeman(f.id); }}>×</button>
+                                  <ConfirmDialog
+                                    title="Remove this foreman from site?"
+                                    confirmText="Remove"
+                                    cancelText="Cancel"
+                                    onConfirm={() => removeForeman(f.id)}
+                                    trigger={
+                                      <button
+                                        className="ml-1"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                        }}
+                                      >
+                                        ×
+                                      </button>
+                                    }
+                                  />
                                 </Badge>
                               ))}
                             </div>
@@ -311,23 +477,51 @@ export default function SiteManagement() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create Site</DialogTitle>
-            <DialogDescription>Assign a Site Incharge and Foremen. A foreman cannot be assigned to multiple sites.</DialogDescription>
+            <DialogDescription>
+              Assign a Site Incharge and Foremen. A foreman cannot be assigned
+              to multiple sites.
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={submitCreate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="siteName">Site Name</Label>
-                <Input id="siteName" required value={siteForm.name} onChange={(e)=>setSiteForm({...siteForm, name: e.target.value})}/>
+                <Input
+                  id="siteName"
+                  required
+                  value={siteForm.name}
+                  onChange={(e) =>
+                    setSiteForm({ ...siteForm, name: e.target.value })
+                  }
+                />
               </div>
               <div>
                 <Label htmlFor="location">Location</Label>
-                <Input id="location" required value={siteForm.location} onChange={(e)=>setSiteForm({...siteForm, location: e.target.value})}/>
+                <Input
+                  id="location"
+                  required
+                  value={siteForm.location}
+                  onChange={(e) =>
+                    setSiteForm({ ...siteForm, location: e.target.value })
+                  }
+                />
               </div>
               <div>
                 <Label htmlFor="incharge">Site Incharge</Label>
-                <select id="incharge" className="border rounded-md h-10 px-3 w-full" value={siteForm.inchargeId} onChange={(e)=>setSiteForm({...siteForm, inchargeId: e.target.value})}>
+                <select
+                  id="incharge"
+                  className="border rounded-md h-10 px-3 w-full"
+                  value={siteForm.inchargeId}
+                  onChange={(e) =>
+                    setSiteForm({ ...siteForm, inchargeId: e.target.value })
+                  }
+                >
                   <option value="">-- None --</option>
-                  {siteIncharges.map((u)=> (<option key={u.id} value={u.id}>{u.name}</option>))}
+                  {siteIncharges.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -339,7 +533,10 @@ export default function SiteManagement() {
       </Dialog>
 
       {/* Edit Site */}
-      <Dialog open={editOpen.open} onOpenChange={(o)=>setEditOpen({ open: o, site: editOpen.site })}>
+      <Dialog
+        open={editOpen.open}
+        onOpenChange={(o) => setEditOpen({ open: o, site: editOpen.site })}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Site</DialogTitle>
@@ -348,17 +545,42 @@ export default function SiteManagement() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="siteName2">Site Name</Label>
-                <Input id="siteName2" required value={siteForm.name} onChange={(e)=>setSiteForm({...siteForm, name: e.target.value})}/>
+                <Input
+                  id="siteName2"
+                  required
+                  value={siteForm.name}
+                  onChange={(e) =>
+                    setSiteForm({ ...siteForm, name: e.target.value })
+                  }
+                />
               </div>
               <div>
                 <Label htmlFor="location2">Location</Label>
-                <Input id="location2" required value={siteForm.location} onChange={(e)=>setSiteForm({...siteForm, location: e.target.value})}/>
+                <Input
+                  id="location2"
+                  required
+                  value={siteForm.location}
+                  onChange={(e) =>
+                    setSiteForm({ ...siteForm, location: e.target.value })
+                  }
+                />
               </div>
               <div>
                 <Label htmlFor="incharge2">Site Incharge</Label>
-                <select id="incharge2" className="border rounded-md h-10 px-3 w-full" value={siteForm.inchargeId} onChange={(e)=>setSiteForm({...siteForm, inchargeId: e.target.value})}>
+                <select
+                  id="incharge2"
+                  className="border rounded-md h-10 px-3 w-full"
+                  value={siteForm.inchargeId}
+                  onChange={(e) =>
+                    setSiteForm({ ...siteForm, inchargeId: e.target.value })
+                  }
+                >
                   <option value="">-- None --</option>
-                  {siteIncharges.map((u)=> (<option key={u.id} value={u.id}>{u.name}</option>))}
+                  {siteIncharges.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -370,20 +592,41 @@ export default function SiteManagement() {
       </Dialog>
 
       {/* Add Foreman */}
-      <Dialog open={addForemanOpen.open} onOpenChange={(o)=>setAddForemanOpen({ open: o, siteId: addForemanOpen.siteId })}>
+      <Dialog
+        open={addForemanOpen.open}
+        onOpenChange={(o) =>
+          setAddForemanOpen({ open: o, siteId: addForemanOpen.siteId })
+        }
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Foreman</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <Label htmlFor="foremanSelect">Select a manager</Label>
-            <select id="foremanSelect" className="border rounded-md h-10 px-3 w-full" value={selectedForemanId} onChange={(e)=>setSelectedForemanId(e.target.value)}>
+            <select
+              id="foremanSelect"
+              className="border rounded-md h-10 px-3 w-full"
+              value={selectedForemanId}
+              onChange={(e) => setSelectedForemanId(e.target.value)}
+            >
               <option value="">Select a manager</option>
-              {unassignedForemen.map((f)=> (<option key={f.id} value={f.id}>{f.name} (@{f.username})</option>))}
+              {unassignedForemen.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.name} (@{f.username})
+                </option>
+              ))}
             </select>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={()=>setAddForemanOpen({ open: false })}>Cancel</Button>
-              <Button onClick={addForemanToSite} disabled={!selectedForemanId}>Add</Button>
+              <Button
+                variant="outline"
+                onClick={() => setAddForemanOpen({ open: false })}
+              >
+                Cancel
+              </Button>
+              <Button onClick={addForemanToSite} disabled={!selectedForemanId}>
+                Add
+              </Button>
             </div>
           </div>
         </DialogContent>
