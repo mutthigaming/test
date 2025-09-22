@@ -333,7 +333,7 @@ export default function SiteManagement() {
                     <div
                       role="button"
                       tabIndex={0}
-                      className="grid grid-cols-12 gap-2 w-full p-3 hover:bg-muted/50"
+                      className="grid grid-cols-12 gap-2 w-full p-3 hover:bg-muted/50 items-center"
                       onClick={() => setExpandedId(expanded ? null : s.id)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
