@@ -71,7 +71,11 @@ export default function AdminApproval() {
     undefined,
   );
 
+  const didFetchRef = useRef(false);
+
   useEffect(() => {
+    if (didFetchRef.current) return;
+    didFetchRef.current = true;
     fetchAttendanceRecords();
   }, []);
 
