@@ -251,11 +251,18 @@ export default function AdminApproval() {
       )}
 
       <div className="flex justify-end">
-        <Dialog open={selectedRecord?.id === record.id} onOpenChange={(open) => { if (open) { openRecordForApproval(record); } else { setSelectedRecord(null); } }}>
+        <Dialog
+          open={selectedRecord?.id === record.id}
+          onOpenChange={(open) => {
+            if (open) {
+              openRecordForApproval(record);
+            } else {
+              setSelectedRecord(null);
+            }
+          }}
+        >
           <DialogTrigger asChild>
-            <Button
-              variant={showActions ? "default" : "outline"}
-            >
+            <Button variant={showActions ? "default" : "outline"}>
               <Eye className="mr-2 h-4 w-4" />
               {showActions ? "Review & Approve" : "View Details"}
             </Button>
