@@ -342,10 +342,10 @@ export default function SiteManagement() {
                         }
                       }}
                     >
-                      <div className="col-span-3 text-left flex items-center gap-2">
+                      <div className="text-left flex items-center gap-2">
                         <UserIcon className="h-4 w-4" /> {incharge?.name || "-"}
                       </div>
-                      <div className="col-span-3 text-left font-medium flex items-center gap-2">
+                      <div className="text-left font-medium flex items-center gap-2">
                         {expanded ? (
                           <ChevronDown className="h-4 w-4" />
                         ) : (
@@ -353,39 +353,39 @@ export default function SiteManagement() {
                         )}
                         {s.name}
                       </div>
-                      <div className="col-span-3 text-left">{s.location}</div>
-                      <div className="col-span-2 text-left">
-                        {siteForemen.length}
-                      </div>
-                      <div className="col-span-1 text-right space-x-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openEdit(s);
-                          }}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <ConfirmDialog
-                          title="Delete this site?"
-                          description="This action cannot be undone."
-                          confirmText="Delete"
-                          cancelText="Cancel"
-                          onConfirm={() => deleteSite(s)}
-                          trigger={
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          }
-                        />
+                      <div className="text-left">{s.location}</div>
+                      <div className="text-left">{siteForemen.length}</div>
+                      <div className="text-right">
+                        <div className="flex justify-end items-center gap-1">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEdit(s);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <ConfirmDialog
+                            title="Delete this site?"
+                            description="This action cannot be undone."
+                            confirmText="Delete"
+                            cancelText="Cancel"
+                            onConfirm={() => deleteSite(s)}
+                            trigger={
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            }
+                          />
+                        </div>
                       </div>
                     </div>
 
