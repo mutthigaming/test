@@ -250,39 +250,37 @@ export default function SiteManagement() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950/40 dark:to-blue-900/10 border-blue-100/60 hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Sites</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
+            <Building2 className="h-4 w-4 text-blue-700/80 dark:text-blue-300" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{sites.length}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-950/40 dark:to-emerald-900/10 border-emerald-100/60 hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Site Incharge</CardTitle>
-            <UserIcon className="h-4 w-4 text-muted-foreground" />
+            <UserIcon className="h-4 w-4 text-emerald-700/80 dark:text-emerald-300" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{siteIncharges.length}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-950/40 dark:to-amber-900/10 border-amber-100/60 hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Assigned Foremen
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Assigned Foremen</CardTitle>
+            <Users className="h-4 w-4 text-amber-700/80 dark:text-amber-300" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{assignedForemenCount}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-gradient-to-r from-sky-50 to-sky-100 dark:from-sky-950/40 dark:to-sky-900/10 border-sky-100/60 hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Workers</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-sky-700/80 dark:text-sky-300" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalWorkers}</div>
@@ -317,12 +315,12 @@ export default function SiteManagement() {
             <div className="text-gray-500">No sites found.</div>
           ) : (
             <div className="divide-y border rounded-md">
-              <div className="grid grid-cols-12 gap-2 p-3 text-xs font-medium uppercase tracking-wide text-gray-500 bg-muted/50">
-                <div className="col-span-3">Site Incharge</div>
-                <div className="col-span-3">Name</div>
-                <div className="col-span-3">Location</div>
-                <div className="col-span-2">Total Foremen</div>
-                <div className="col-span-1 text-right">Actions</div>
+              <div className="grid grid-cols-[2fr_3fr_3fr_1.5fr_120px] gap-2 p-3 text-xs font-medium uppercase tracking-wide text-gray-500 bg-muted/50">
+                <div>Site Incharge</div>
+                <div>Name</div>
+                <div>Location</div>
+                <div>Total Foremen</div>
+                <div className="text-right">Actions</div>
               </div>
               {filteredSites.map((s) => {
                 const incharge = siteIncharges.find(
@@ -335,7 +333,7 @@ export default function SiteManagement() {
                     <div
                       role="button"
                       tabIndex={0}
-                      className="grid grid-cols-12 gap-2 w-full p-3 hover:bg-muted/50"
+                      className="grid grid-cols-[2fr_3fr_3fr_1.5fr_120px] gap-2 w-full p-3 hover:bg-muted/50 items-center"
                       onClick={() => setExpandedId(expanded ? null : s.id)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
@@ -344,10 +342,10 @@ export default function SiteManagement() {
                         }
                       }}
                     >
-                      <div className="col-span-3 text-left flex items-center gap-2">
+                      <div className="text-left flex items-center gap-2">
                         <UserIcon className="h-4 w-4" /> {incharge?.name || "-"}
                       </div>
-                      <div className="col-span-3 text-left font-medium flex items-center gap-2">
+                      <div className="text-left font-medium flex items-center gap-2">
                         {expanded ? (
                           <ChevronDown className="h-4 w-4" />
                         ) : (
@@ -355,39 +353,39 @@ export default function SiteManagement() {
                         )}
                         {s.name}
                       </div>
-                      <div className="col-span-3 text-left">{s.location}</div>
-                      <div className="col-span-2 text-left">
-                        {siteForemen.length}
-                      </div>
-                      <div className="col-span-1 text-right space-x-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openEdit(s);
-                          }}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <ConfirmDialog
-                          title="Delete this site?"
-                          description="This action cannot be undone."
-                          confirmText="Delete"
-                          cancelText="Cancel"
-                          onConfirm={() => deleteSite(s)}
-                          trigger={
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          }
-                        />
+                      <div className="text-left">{s.location}</div>
+                      <div className="text-left">{siteForemen.length}</div>
+                      <div className="text-right">
+                        <div className="flex justify-end items-center gap-1">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEdit(s);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <ConfirmDialog
+                            title="Delete this site?"
+                            description="This action cannot be undone."
+                            confirmText="Delete"
+                            cancelText="Cancel"
+                            onConfirm={() => deleteSite(s)}
+                            trigger={
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            }
+                          />
+                        </div>
                       </div>
                     </div>
 
