@@ -315,12 +315,12 @@ export default function SiteManagement() {
             <div className="text-gray-500">No sites found.</div>
           ) : (
             <div className="divide-y border rounded-md">
-              <div className="grid grid-cols-12 gap-2 p-3 text-xs font-medium uppercase tracking-wide text-gray-500 bg-muted/50">
-                <div className="col-span-3">Site Incharge</div>
-                <div className="col-span-3">Name</div>
-                <div className="col-span-3">Location</div>
-                <div className="col-span-2">Total Foremen</div>
-                <div className="col-span-1 text-right">Actions</div>
+              <div className="grid grid-cols-[2fr_3fr_3fr_1.5fr_120px] gap-2 p-3 text-xs font-medium uppercase tracking-wide text-gray-500 bg-muted/50">
+                <div>Site Incharge</div>
+                <div>Name</div>
+                <div>Location</div>
+                <div>Total Foremen</div>
+                <div className="text-right">Actions</div>
               </div>
               {filteredSites.map((s) => {
                 const incharge = siteIncharges.find(
